@@ -5,5 +5,8 @@
 Homestead.json
 Homestead.yaml
 .env
+
 storage/oauth-private.key
 storage/oauth-public.key
+
+public/css/app.css.map
