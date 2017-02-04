@@ -69,6 +69,13 @@ class RouteServiceProvider extends ServiceProvider
     protected function mapApiRoutes()
     {
         Route::group([
+            'middleware' => 'throttle',
+            'namespace' => '\Laravel\Passport\Http\Controllers',
+        ], function () {
+            Route::post('/auth', 'AccessTokenController@issueToken');
+        });
+
+        Route::group([
             'middleware' => 'api',
             'namespace' => $this->namespace,
             'prefix' => 'api',
