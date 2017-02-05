@@ -27,4 +27,34 @@ class User extends Authenticatable
     protected $hidden = [
         'password', 'remember_token',
     ];
+
+    /**
+     * Get the address record associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function address()
+    {
+        return $this->hasOne('App\Address');
+    }
+
+    /**
+     * Get the credit card record associated with the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function creditCard()
+    {
+        return $this->hasOne('App\CreditCard');
+    }
+
+    /**
+     * Get the pets for the user.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function pets()
+    {
+        return $this->hasMany('App\Pet');
+    }
 }

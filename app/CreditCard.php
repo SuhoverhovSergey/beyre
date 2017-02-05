@@ -9,6 +9,6 @@ class CreditCard extends Model
     protected $table = 'credit_card';
 
     protected $fillable = [
-        'number', 'card_holder', 'expiration', 'c_security_code',
+        'user_id', 'number', 'card_holder', 'expiration', 'c_security_code',
     ];
 }

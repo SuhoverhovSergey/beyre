@@ -15,6 +15,7 @@ class CreateCreditCardTable extends Migration
     {
         Schema::create('credit_card', function (Blueprint $table) {
             $table->increments('id');
+            $table->integer('user_id');
             $table->string('number');
             $table->string('card_holder');
             $table->string('expiration');
