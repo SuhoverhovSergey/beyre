@@ -21,6 +21,7 @@ class CreatePetTable extends Migration
             $table->integer('breed');
             $table->integer('gender');
             $table->integer('weight')->default('0');
+            $table->string('color')->default('');
             $table->date('birth_date')->nullable();
             $table->boolean('neutered')->default('0');
             $table->boolean('microchipped')->default('0');
