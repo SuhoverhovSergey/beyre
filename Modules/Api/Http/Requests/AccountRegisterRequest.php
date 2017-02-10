@@ -23,7 +23,15 @@ class AccountRegisterRequest extends FormRequest
      */
     public function rules()
     {
-        return [
+        $petsCount = count($this->input('Pets', []));
+
+        // the validation rules for PetAvatarX files
+        $petAvatarRules = [];
+        for ($i = 1; $i <= $petsCount; $i++) {
+            $petAvatarRules["PetAvatar{$i}"] = 'required|file|image|max:5120';
+        }
+
+        return array_merge([
             'AccountDetails.firstname' => 'required|max:255',
             'AccountDetails.lastname' => 'required|max:255',
             'AccountDetails.email' => 'required|max:255|email|unique:users,email',
@@ -52,7 +60,9 @@ class AccountRegisterRequest extends FormRequest
             'Pets.*.clinicname' => 'max:255',
             'Pets.*.specialnotes' => 'max:255',
             'Pets.*.description' => 'max:255',
-        ];
+
+            'Avatar' => 'required|file|image|max:5120',
+        ], $petAvatarRules);
     }
 
     /**
@@ -64,6 +74,7 @@ class AccountRegisterRequest extends FormRequest
     {
         $request = $this->request;
 
+        // convert input data from json-string to array
         $parameters = array_map(function ($parameter) {
             return is_string($parameter) ? json_decode($parameter, true) : $parameter;
         }, $request->all());

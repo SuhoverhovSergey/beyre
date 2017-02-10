@@ -10,6 +10,7 @@ use App\Pet;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Storage;
 use Modules\Api\Http\Requests\AccountRegisterRequest;
 
 class AccountController extends Controller
@@ -35,6 +36,12 @@ class AccountController extends Controller
             $user = User::create($requestData['AccountDetails']);
 
             if ($user) {
+                $files = $request->allFiles();
+                if (isset($files['Avatar'])) {
+                    $path = $files['Avatar']->store('avatars', 'public');
+                    $url = Storage::url($path);
+                }
+
                 $address = new Address($requestData['PersonalInfo']);
                 $address->user_id = $user->id;
                 $address->save();
@@ -43,13 +50,17 @@ class AccountController extends Controller
                 $creditCard->user_id = $user->id;
                 $creditCard->save();
 
-                foreach ($requestData['Pets'] as $petData) {
+                foreach ($requestData['Pets'] as $key => $petData) {
                     $pet = new Pet($petData);
                     $pet->user_id = $user->id;
-                    $pet->save();
+                    if ($pet->save()) {
+                        $petAvatarKey = 'PetAvatar' . ($key + 1);
+                        if (isset($files[$petAvatarKey])) {
+                            $path = $files[$petAvatarKey]->store('pet_avatars', 'public');
+                            $url = Storage::url($path);
+                        }
+                    }
                 }
-
-                $files = $request->allFiles();
             }
 
             DB::commit();
