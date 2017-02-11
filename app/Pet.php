@@ -10,6 +10,6 @@ class Pet extends Model
 
     protected $fillable = [
         'user_id', 'name', 'species', 'breed', 'gender', 'weight', 'birth_date', 'neutered', 'microchipped',
-        'clinic_name', 'special_notes', 'description',
+        'clinic_name', 'special_notes', 'description', 'avatar_path',
     ];
 }
