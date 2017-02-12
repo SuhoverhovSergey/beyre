@@ -111,25 +111,22 @@ class AccountRegisterRequest extends FormRequest
      */
     public function afterValidation()
     {
-        $request = $this->request;
-        $parameters = $request->all();
-
         // prepare the data to fill the model
-        $parameters['AccountDetails'] = array_key_map($parameters['AccountDetails'], [
+        $parameters['AccountDetails'] = array_key_map($this->input('AccountDetails', []), [
             'firstname' => 'name', 'lastname' => 'last_name',
         ]);
-        $parameters['PersonalInfo'] = array_key_map($parameters['PersonalInfo'], [
+        $parameters['PersonalInfo'] = array_key_map($this->input('PersonalInfo', []), [
             'zipcode' => 'zip_code',
         ]);
-        $parameters['CreditCard'] = array_key_map($parameters['CreditCard'], [
+        $parameters['CreditCard'] = array_key_map($this->input('CreditCard', []), [
             'cardholder' => 'card_holder', 'csecuritycode' => 'c_security_code',
         ]);
         $parameters['Pets'] = array_map(function ($pet) {
             return array_key_map($pet, [
                 'birthdate' => 'birth_date', 'clinicname' => 'clinic_name', 'specialnotes' => 'special_notes',
             ]);
-        }, $parameters['Pets']);
+        }, $this->input('Pets', []));
 
-        $request->replace($parameters);
+        $this->request->replace($parameters);
     }
 }

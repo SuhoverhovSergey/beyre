@@ -27,36 +27,36 @@ class AccountController extends Controller
      */
     public function register(AccountRegisterRequest $request)
     {
-        $requestData = $request->all();
-
         DB::beginTransaction();
 
         try {
-            $user = User::create($requestData['AccountDetails']);
+            $user = new User($request->input('AccountDetails', []));
+            $user->password = bcrypt($user->password);
+            $user->remember_token = str_random(10);
+            if ($avatar = $request->file('Avatar')) {
+                $user->avatar_path = $avatar->store('avatars', 'public');
+            }
 
-            if ($user) {
-                $files = $request->allFiles();
-
-                if (isset($files['Avatar'])) {
-                    $user->avatar_path = $files['Avatar']->store('avatars', 'public');
-                    $user->save();
+            if ($user->save()) {
+                if ($addressData = $request->input('PersonalInfo')) {
+                    $address = new Address($addressData);
+                    $address->user_id = $user->id;
+                    $address->save();
                 }
 
-                $address = new Address($requestData['PersonalInfo']);
-                $address->user_id = $user->id;
-                $address->save();
+                if ($creditCardData = $request->input('CreditCard')) {
+                    $creditCard = new CreditCard($creditCardData);
+                    $creditCard->user_id = $user->id;
+                    $creditCard->save();
+                }
 
-                $creditCard = new CreditCard($requestData['CreditCard']);
-                $creditCard->user_id = $user->id;
-                $creditCard->save();
-
-                foreach ($requestData['Pets'] as $key => $petData) {
+                foreach ($request->input('Pets', []) as $key => $petData) {
                     $pet = new Pet($petData);
                     $pet->user_id = $user->id;
 
                     $petAvatarKey = 'PetAvatar' . ($key + 1);
-                    if (isset($files[$petAvatarKey])) {
-                        $pet->avatar_path = $files[$petAvatarKey]->store('pet_avatars', 'public');
+                    if ($petAvatar = $request->file($petAvatarKey)) {
+                        $pet->avatar_path = $petAvatar->store('pet_avatars', 'public');
                     }
 
                     $pet->save();
