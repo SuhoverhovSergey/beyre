@@ -8,18 +8,12 @@ use App\Address;
 use App\CreditCard;
 use App\Pet;
 use Laravel\Passport\ClientRepository;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
 use Modules\Api\Http\Requests\AccountRegisterRequest;
 
 class AccountController extends Controller
 {
-    /**
-     * @var Request
-     */
-    protected $request;
-
     /**
      * Creating a new account.
      *
