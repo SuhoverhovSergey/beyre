@@ -7,6 +7,7 @@ use App\User;
 use App\Address;
 use App\CreditCard;
 use App\Pet;
+use Laravel\Passport\ClientRepository;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
@@ -22,11 +23,14 @@ class AccountController extends Controller
     /**
      * Creating a new account.
      *
+     * @param ClientRepository $clients
      * @param AccountRegisterRequest $request
      * @return Response
      */
-    public function register(AccountRegisterRequest $request)
+    public function register(ClientRepository $clients, AccountRegisterRequest $request)
     {
+        $responseData = [];
+
         DB::beginTransaction();
 
         try {
@@ -38,6 +42,12 @@ class AccountController extends Controller
             }
 
             if ($user->save()) {
+                $client = $clients->createPasswordGrantClient($user->id, $user->email, '');
+                $responseData = [
+                    'client_id' => $client->id,
+                    'client_secret' => $client->secret,
+                ];
+
                 if ($addressData = $request->input('PersonalInfo')) {
                     $address = new Address($addressData);
                     $address->user_id = $user->id;
@@ -66,10 +76,10 @@ class AccountController extends Controller
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+
+            $responseData = ['message' => $e->getMessage()];
         }
 
-        return response()->json([
-            'Account' => 'register',
-        ]);
+        return response()->json($responseData);
     }
 }
