@@ -7,4 +7,6 @@ Route::group(['middleware' => 'api', 'prefix' => 'api', 'namespace' => 'Modules\
     Route::post('/account/register', 'AccountController@register');
 
     Route::get('/pets', 'PetController@index')->middleware('auth:api');
+
+    Route::post('/pets', 'PetController@create')->middleware('auth:api');
 });
