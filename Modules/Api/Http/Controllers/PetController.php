@@ -52,10 +52,16 @@ class PetController extends Controller
         $user = Auth::user();
         $petData = $request->all();
 
-        $pet = Pet::where('user_id', $user->id)->find($id);
-        $pet->fill($petData);
-        $pet->save();
+        try {
+            $pet = Pet::where('user_id', $user->id)->findOrFail($id);
+            $pet->fill($petData);
+            $pet->save();
 
-        return response()->json($pet->toArray());
+            $responseData = $pet->toArray();
+        } catch (\Exception $e) {
+            $responseData = ['message' => $e->getMessage()];
+        }
+
+        return response()->json($responseData);
     }
 }
