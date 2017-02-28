@@ -183,6 +183,11 @@ return [
          */
         Laravel\Passport\PassportServiceProvider::class,
         Nwidart\Modules\LaravelModulesServiceProvider::class,
+
+        /*
+         * Laravel IDE helper
+         */
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
     ],
 
     /*
