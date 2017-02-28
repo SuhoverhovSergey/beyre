@@ -8,7 +8,7 @@ use App\Address;
 use App\CreditCard;
 use App\Pet;
 use Laravel\Passport\ClientRepository;
-use Illuminate\Http\Response;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use Modules\Api\Http\Requests\AccountRegisterRequest;
 
@@ -19,11 +19,11 @@ class AccountController extends Controller
      *
      * @param ClientRepository $clients
      * @param AccountRegisterRequest $request
-     * @return Response
+     * @return JsonResponse
      */
     public function register(ClientRepository $clients, AccountRegisterRequest $request)
     {
-        $responseData = [];
+        $response = response()->json();
 
         DB::beginTransaction();
 
@@ -37,10 +37,10 @@ class AccountController extends Controller
 
             if ($user->save()) {
                 $client = $clients->createPasswordGrantClient($user->id, $user->email, '');
-                $responseData = [
+                $response->setData([
                     'client_id' => $client->id,
                     'client_secret' => $client->secret,
-                ];
+                ]);
 
                 if ($addressData = $request->input('PersonalInfo')) {
                     $address = new Address($addressData);
@@ -71,9 +71,10 @@ class AccountController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
 
-            $responseData = ['message' => $e->getMessage()];
+            $response->setStatusCode(JsonResponse::HTTP_BAD_REQUEST);
+            $response->setData(['message' => $e->getMessage()]);
         }
 
-        return response()->json($responseData);
+        return $response;
     }
 }
