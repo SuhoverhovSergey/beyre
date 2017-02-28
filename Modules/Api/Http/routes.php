@@ -9,4 +9,6 @@ Route::group(['middleware' => 'api', 'prefix' => 'api', 'namespace' => 'Modules\
     Route::get('/pets', 'PetController@index')->middleware('auth:api');
 
     Route::post('/pets', 'PetController@create')->middleware('auth:api');
+
+    Route::put('/pets/{id}', 'PetController@update')->middleware('auth:api');
 });

@@ -40,4 +40,22 @@ class PetController extends Controller
 
         return response()->json($pet->toArray());
     }
+
+    /**
+     * Update the specified resource in storage.
+     * @param PetRequest $request
+     * @param int $id
+     * @return Response
+     */
+    public function update(PetRequest $request, $id)
+    {
+        $user = Auth::user();
+        $petData = $request->all();
+
+        $pet = Pet::where('user_id', $user->id)->find($id);
+        $pet->fill($petData);
+        $pet->save();
+
+        return response()->json($pet->toArray());
+    }
 }
